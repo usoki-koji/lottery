@@ -23,7 +23,7 @@ fun userTry() {
     repeat(5) { lotteryNumbers.add(random2DigitsNumber(random, lotteryNumbers)) }
 
     //Debug
-    println(lotteryNumbers)
+    //println(lotteryNumbers)
 
     readLine() ?.let { userGuess ->
         val userDigits = userGuess.split(" ")
