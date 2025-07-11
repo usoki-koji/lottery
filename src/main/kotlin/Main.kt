@@ -1,6 +1,24 @@
 package me.koji
 
+import java.time.Instant
+import kotlin.random.Random
+
+fun random2DigitsNumber(random: Random, prohibited: Collection<Int>) : Int {
+    val randomInt = random.nextInt(0, 99)
+
+    return if (prohibited.contains(randomInt))
+        randomInt
+    else
+        random2DigitsNumber(random, prohibited)
+}
+
 fun userTry() {
+    val random = Random(Instant.now().toEpochMilli());
+
+    val lotteryNumbers = mutableSetOf<Int>()
+
+    repeat(5) { lotteryNumbers.add(random2DigitsNumber(random, lotteryNumbers)) }
+
     readLine() ?.let { userGuess ->
         val userDigits = userGuess.split(" ")
 
@@ -10,8 +28,12 @@ fun userTry() {
         }
 
         if (userDigits.any { it.length > 2 }) {
-            println("Sorry, you can't input a three digits number!")
+            println("Sorry, you can't input a three digits number. Here, try again.")
+
+            return userTry()
         }
+
+
     }
 }
 
