@@ -3,10 +3,13 @@ package me.koji
 import java.time.Instant
 import kotlin.random.Random
 
+// ~~text~~
+val wrongNumber = "\u001B[9m"
+
 fun random2DigitsNumber(random: Random, prohibited: Collection<Int>) : Int {
     val randomInt = random.nextInt(0, 99)
 
-    return if (prohibited.contains(randomInt))
+    return if (!prohibited.contains(randomInt))
         randomInt
     else
         random2DigitsNumber(random, prohibited)
@@ -15,9 +18,12 @@ fun random2DigitsNumber(random: Random, prohibited: Collection<Int>) : Int {
 fun userTry() {
     val random = Random(Instant.now().toEpochMilli());
 
-    val lotteryNumbers = mutableSetOf<Int>()
+    val lotteryNumbers = linkedSetOf<Int>()
 
     repeat(5) { lotteryNumbers.add(random2DigitsNumber(random, lotteryNumbers)) }
+
+    //Debug
+    println(lotteryNumbers)
 
     readLine() ?.let { userGuess ->
         val userDigits = userGuess.split(" ")
@@ -33,7 +39,33 @@ fun userTry() {
             return userTry()
         }
 
+        val intzedDigits = userDigits.map { it.toInt() }
 
+        val correctNumbers = MutableList(5) { false }
+
+        for (i in 0..4) {
+            correctNumbers[i] = (intzedDigits[i] == lotteryNumbers.elementAt(i))
+        }
+
+        if (correctNumbers.all { !it }) {
+            println("Sorry you missed all the numbers.")
+            println("Want try again? (Press enter)")
+
+            readLine()
+
+            println("Well, what your guess?")
+
+            userTry()
+        } else {
+            println("You guessed ${correctNumbers.count { it }}!")
+
+            val stringBuilder = StringBuilder()
+
+            for (i in 0..4) {
+                val stringedInt = (intzedDigits[i].toString())
+                stringBuilder.append(if (correctNumbers[i]) stringedInt else (wrongNumber + stringedInt + "\u001B[0m") /* Reset */)
+            }
+        }
     }
 }
 
